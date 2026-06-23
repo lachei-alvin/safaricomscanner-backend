@@ -117,7 +117,7 @@ const path = require('path');
 const { initializeApp: initAdmin, cert, getApps } = require('firebase-admin/app');
 const { getFirestore: getAdminFirestore } = require('firebase-admin/firestore');
 const crypto = require('crypto');
-const serviceAccount = require('./serviceAccountKey.json');
+const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT) : require('./serviceAccountKey.json');
 
 if (!getApps().length) {
   const sa = process.env.FIREBASE_SERVICE_ACCOUNT 
