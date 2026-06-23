@@ -120,7 +120,10 @@ const crypto = require('crypto');
 const serviceAccount = require('./serviceAccountKey.json');
 
 if (!getApps().length) {
-  initAdmin({ credential: cert(serviceAccount) });
+  const sa = process.env.FIREBASE_SERVICE_ACCOUNT 
+    ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+    : serviceAccount;
+  initAdmin({ credential: cert(sa) });
 }
 const adminDb = getAdminFirestore();
 
