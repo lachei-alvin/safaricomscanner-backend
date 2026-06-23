@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SafaricomScanner Admin</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; }
+    h1 { color: #4CAF50; }
+    select, input { padding: 10px; margin: 8px 0; width: 100%; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; }
+    button { background: #4CAF50; color: white; padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; width: 100%; }
+    button:hover { background: #388E3C; }
+    #tokens { margin-top: 20px; }
+    .token { background: #f5f5f5; padding: 12px; margin: 6px 0; border-radius: 6px; font-size: 18px; font-weight: bold; letter-spacing: 2px; display: flex; justify-content: space-between; align-items: center; }
+    .copy-btn { background: #2196F3; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+    .error { color: red; margin-top: 10px; }
+    .success { color: green; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🔑 Token Generator</h1>
+  <label>Duration:</label>
+  <select id="duration">
+    <option value="1day">1 Day</option>
+    <option value="7days" selected>7 Days</option>
+    <option value="30days">30 Days</option>
+  </select>
+  <label>Number of tokens:</label>
+  <input type="number" id="count" value="1" min="1" max="50" />
+  <button onclick="generateTokens()">Generate Tokens</button>
+  <div id="message"></div>
+  <div id="tokens"></div>
+
+  <script>
+    async function generateTokens() {
+      const duration = document.getElementById('duration').value;
+      const count = parseInt(document.getElementById('count').value);
+      const msg = document.getElementById('message');
+      const tokensDiv = document.getElementById('tokens');
+      msg.innerHTML = 'Generating...';
+      tokensDiv.innerHTML = '';
+      try {
+        const res = await fetch('/generate-tokens', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({duration, count}),
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.innerHTML = `<div class="success">✅ Generated ${data.tokens.length} token(s)</div>`;
+          tokensDiv.innerHTML = data.tokens.map(t => `
+            <div class="token">
+              <span>${t}</span>
+              <button class="copy-btn" onclick="navigator.clipboard.writeText('${t}')">Copy</button>
+            </div>
+          `).join('');
+        } else {
+          msg.innerHTML = `<div class="error">❌ ${data.error}</div>`;
+        }
+      } catch (e) {
+        msg.innerHTML = `<div class="error">❌ ${e.message}</div>`;
+      }
+    }
+  </script>
+</body>
+</html>
