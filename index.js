@@ -54,7 +54,7 @@ app.post("/stk-push", async (req, res) => {
     };
 
     const response = await axios.post(
-      `${MEGAPAY_BASE_URL}/initiatestk`,
+      `${MEGAPAY_BASE_URL}/v1/initiatestk`,
       payload,
     );
 
@@ -80,7 +80,7 @@ app.post("/stk-status", async (req, res) => {
     };
 
     const response = await axios.post(
-      `${MEGAPAY_BASE_URL}/checkstatus`,
+      `${MEGAPAY_BASE_URL}/v1/transactionstatus`,
       payload,
     );
 
